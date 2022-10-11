@@ -1,0 +1,14 @@
+lamb\key\mapper\ItemsSpecMapper.class
+lamb\key\mapper\CategoryMapperCustom.class
+lamb\key\mapper\UsersMapper.class
+lamb\key\mapper\CarouselMapper.class
+lamb\key\mapper\ItemsCommentsMapper.class
+lamb\key\mapper\UserAddressMapper.class
+lamb\key\mapper\StuMapper.class
+lamb\key\mapper\ItemsMapper.class
+lamb\key\mapper\ItemsParamMapper.class
+lamb\key\mapper\ItemsImgMapper.class
+lamb\key\mapper\OrderStatusMapper.class
+lamb\key\mapper\CategoryMapper.class
+lamb\key\mapper\OrderItemsMapper.class
+lamb\key\mapper\OrdersMapper.class

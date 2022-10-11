@@ -1,0 +1,15 @@
+server:
+  port: 80
+
+spring:
+  datasource: # 数据源的相关配置
+    url: jdbc:mysql://localhost:3306/foodie?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    password: root
+
+cos:
+  tencent:
+    accesskey: AKIDJRJwLWS9cqoX0DBtLYVCeqnUw84lCPN5
+    secretKey: UjiRv97sNddNs76pJXVFkzzkFUTDhvtb
+    bucket: ap-guangzhou
+    bucketName: lambkey-1309051782
+    path: https://lambkey-1309051782.cos.ap-guangzhou.myqcloud.com

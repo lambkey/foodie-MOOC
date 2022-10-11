@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lamb.key.mapper.ItemsMapper">
+    <select id="queryItemsBySpecIds" parameterType="List" resultType="lamb.key.pojo.vo.ShopCartVO">
+        SELECT
+            t_items.id as itemId,
+            t_items.item_name as  itemName,
+            t_items_img.url as itemImgUrl,
+            t_items_spec.id as specId,
+            t_items_spec.name as specName,
+            t_items_spec.price_discount as priceDiscount,
+            t_items_spec.price_normal as priceNormal
+        FROM
+            items_spec t_items_spec
+                LEFT JOIN
+            items t_items
+            ON
+                t_items_spec.item_id=t_items.id
+                LEFT JOIN
+            items_img  t_items_img
+            ON
+                t_items_spec.item_id = t_items_img.item_id
+        WHERE
+            t_items_img.is_main = 1
+          AND
+                t_items_spec.id
+                IN
+                <foreach collection="paramsMap" index="index" item="specId" open="(" separator="," close=")">
+                #{specId}
+                </foreach>
+    </select>
+
+    <select id="searchItemByKeywords" parameterType="Map" resultType="lamb.key.pojo.vo.SearchItemVO">
+        SELECT
+
+            i.id as itemId,
+            i.item_name as itemName,
+            i.sell_counts as sellCounts,
+            ii.url as imgUrl,
+            tempSpec.price as price
+        FROM
+            items i
+        LEFT JOIN
+            items_img ii
+        ON
+            i.id = ii.item_id
+        LEFT JOIN
+        /*记住当SELECT 后 既有 表结构本身的字段，又有需要使用聚合函数（COUNT(),SUM(),MAX(),MIN(),AVG()等）的字段，就要用到group by分组
+          通过 group by 按照item_id 分组就会挑选属于item_id的price_discount为的最小的一项为数据
+          */
+            (SELECT item_id,MIN(price_discount) as price FROM items_spec GROUP BY item_id) tempSpec
+        ON
+            i.id = tempSpec.item_id
+        WHERE
+            ii.is_main=1
+
+            <if test="paramsMap.keywords != null and paramsMap.keywords != ''">
+                AND i.item_name like '%${paramsMap.keywords}%'
+            </if>
+        ORDER BY
+        -- k: 默认代表默认顺序，根据name
+        -- c: 根据销量
+        -- p: 根据价格排序
+        <choose>
+            <when test="paramsMap.sort==&quot;c&quot;">
+                i.sell_counts desc
+            </when>
+            <when test="paramsMap.sort==&quot;p&quot;">
+                tempSpec.price asc
+            </when>
+            <otherwise>
+                i.item_name asc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="searchItemByThirdCat" parameterType="Map" resultType="lamb.key.pojo.vo.SearchItemVO">
+        SELECT
+
+        i.id as itemId,
+        i.item_name as itemName,
+        i.sell_counts as sellCounts,
+        ii.url as imgUrl,
+        tempSpec.price as price
+        FROM
+        items i
+        LEFT JOIN
+        items_img ii
+        ON
+        i.id = ii.item_id
+        LEFT JOIN
+        (SELECT item_id,MIN(price_discount) as price FROM items_spec GROUP BY item_id) tempSpec
+        ON
+        i.id = tempSpec.item_id
+        WHERE
+        ii.is_main=1
+
+        and
+           i.cat_id = #{paramsMap.catId}
+        ORDER BY
+        -- k: 默认代表默认顺序，根据name
+        -- c: 根据销量
+        -- p: 根据价格排序
+        <choose>
+            <when test="paramsMap.sort==&quot;c&quot;">
+                i.sell_counts desc
+            </when>
+            <when test="paramsMap.sort==&quot;p&quot;">
+                tempSpec.price asc
+            </when>
+            <otherwise>
+                i.item_name asc
+            </otherwise>
+        </choose>
+    </select>
+
+
+</mapper>

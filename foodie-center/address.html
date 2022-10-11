@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+
+		<title>天天吃货用户中心 - 地址管理</title>
+		<link rel="shortcut icon" href="img/foodie.ico" />
+
+		<link href="AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css">
+		<link href="AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css">
+
+		<link href="css/personal.css" rel="stylesheet" type="text/css">
+		<link href="css/addstyle.css" rel="stylesheet" type="text/css">
+		<script src="AmazeUI-2.4.2/assets/js/jquery.min.js" type="text/javascript"></script>
+		<script src="AmazeUI-2.4.2/assets/js/amazeui.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.9/dist/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="js/cities.js"></script>
+		<style>
+			.addressPerson{
+				margin-right: 15px;
+			}
+			.address{
+				margin-right: 11px;
+			}
+			.formAddress *{
+				margin-top: 4px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div id="addressList">
+			<div class="nav-table">
+				<div class="long-title"><span class="all-goods" style="font-weight: bold;">用户中心</span></div>
+			</div>
+			<b class="line"></b>
+
+			<div class="center">
+				<div class="col-main">
+					<div class="main-wrap">
+
+						<div class="user-address">
+							<!--标题 -->
+							<div class="am-cf am-padding">
+								<div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">地址管理</strong> / <small>Address&nbsp;list</small></div>
+							</div>
+							<hr/>
+							<ul class="am-avg-sm-1 am-avg-md-3 am-thumbnails">
+
+								<li v-for="(address, addressIndex) in addressList" :key="addressIndex" :class="['user-addresslist', {'defaultAddr':address.isDefault == 1}]" style="margin-top: 6px;">
+									<span class="new-option-r" v-show="address.isDefault == 1">
+										<i class="am-icon-check-circle"></i>默认地址
+									</span>
+									<p class="new-tit new-p-re">
+										<span class="new-txt">{{address.receiver}}</span>
+										<span class="new-txt-rd2">{{address.mobile}}</span>
+									</p>
+									<div class="new-mu_l2a new-p-re">
+										<p class="new-mu_l2cw">
+											<span class="title">地址：</span>
+											<span class="province">{{address.province}}</span>
+											<span class="city">{{address.city}}</span>
+											<span class="dist">{{address.district}}</span>
+											<span class="street">{{address.detail}}</span></p>
+									</div>
+								</li>
+							</ul>
+							<div class="am-cf am-padding">
+								<div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">添加收货地址</strong> / <small>Address&nbsp;add</small></div>
+							</div>
+							<hr />
+							<!-- 地址表单 -->
+							<form class="formAddress">
+								
+									<label class="addressPerson">收货人:</label><input v-model="receiver" class="addressForm" placeholder="收货人"/><br>
+									<label>手机号码:</label><input v-model="mobile" class="addressForm" placeholder="手机号码"/><br>
+									<label class="address">所在地:</label> 
+											<select v-model="prov">
+												<option v-for="(option,index) in addressAllList" :value="option.name">{{option.name}}</option>
+											</select>
+											<select v-model="city">
+												<option v-for="(option1,index) in cityArr" :value="option1.name">{{option1.name}}</option>
+											</select>
+											<select v-if="disShow"  v-model="district" class="dis">
+												<option v-for="(option1,index) in districtArr" :value="option1.name">{{option1.name}}</option>
+											</select>
+											<br>
+									详细地址:<textarea v-model="detailAddress"></textarea><br>
+									<input type="button" @click="saveAddress($event)" value="保存"/>
+							</form>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<!--底部-->
+					<div class="footer ">
+					
+						<div class="footer-bd ">
+							<p><em>© 2019 imooc.com 京ICP备12003892号-11 北京奥鹏文化传媒有限公司 版权所有</em></p>
+						</div>
+					</div>
+				</div>
+
+				<aside class="menu">
+					<ul>
+						<li class="person">
+							<span style="font-weight: bold;">
+								<a href="index.html">个人中心</a>
+							</span>
+						</li>
+						<li class="person">
+							<a href="#">个人资料</a>
+							<ul>
+								<li> <a href="userinfo.html">我的信息</a></li>
+								<!-- <li> <a href="safety.html">安全设置</a></li> -->
+								<li class="active"> <a href="address.html">收货地址</a></li>
+							</ul>
+						</li>
+						<li class="person">
+							<a href="#">我的交易</a>
+							<ul>
+								<li><a href="order.html">订单管理</a></li>
+								<li> <a href="comment.html">我的评价</a></li>
+							</ul>
+						</li>
+					</ul>
+				</aside>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/app.js"></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script type="text/javascript">
+			var index = new Vue({
+				el: "#addressList",
+				data: {
+					userIsLogin: false,
+					userInfo: {},
+					addressList: {},
+					addressAllList:arrAll,
+					prov:'北京',
+					city:'东城区',
+					district:'',
+					cityArr:[],
+					districtArr:[],
+					disShow:true,
+					detailAddress:'',
+					receiver:'',
+					mobile:''
+				},
+				created() {
+					// var me = this;
+					// 通过cookie判断用户是否登录
+					this.judgeUserLoginStatus();
+
+					// 渲染地址信息
+					this.renderAddressList();
+					
+					
+				},
+				watch:{
+					'prov':{
+						immediate:true,
+						handler(newValue,oldValue){
+							for(var i = 0;i<this.addressAllList.length;i++){
+								if(newValue === this.addressAllList[i].name ){
+									this.cityArr = this.addressAllList[i].sub;
+									if (this.addressAllList[i].name ==='上海' || this.addressAllList[i].name ==='天津' ||this.addressAllList[i].name ==='北京' ||this.addressAllList[i].name ==='重庆'){
+										this.cityArr = this.addressAllList[i].sub[1].sub;
+										this.district = this.city
+									}else {
+										this.disShow = true
+									}
+								}
+							}
+						}
+					},
+					'city':{
+						immediate: true,
+						handler(newValue, oldValue) {
+							console.log(this.cityArr)
+							for(var i = 0;i<this.cityArr.length;i++){
+								if (newValue === this.cityArr[i].name){
+									this.districtArr = this.cityArr[i].sub;
+								}
+							}
+						}
+					}
+				},
+				methods: {
+					saveAddress(e){
+
+						// 地址id为空，则新增地址，否则更新地址
+
+							axios.post(
+									'http://localhost:8088' + '/address/add',
+									{
+										"userId": this.userInfo.id,
+										"receiver": this.receiver,
+										"mobile": this.mobile,
+										"province": this.prov,
+										"city": this.city,
+										"district": this.district,
+										"detail": this.detailAddress
+									},
+									{
+										headers: {
+											'headerUserId': this.userInfo.id,
+											'headerUserToken': this.userInfo.userUniqueToken
+										}
+									})
+									.then(res => {
+										if (res.data.status === 200) {
+											// 设置更新地址的id为空
+											this.updatedAddressId = "";
+											alert('保存成功');
+											this.renderAddressList();
+										} else if (res.data.status === 500) {
+											alert(res.data.message);
+										}
+									});
+
+					},
+					renderAddressList() {
+						var userInfo = this.userInfo;
+						// 请求后端获得最新数据
+						var serverUrl = app.serverUrl;
+						axios.defaults.withCredentials = true;
+						axios.post(
+								serverUrl + '/address/list?userId=' + userInfo.id, {}, 
+								{
+									headers: {
+										'headerUserId': userInfo.id,
+										'headerUserToken': userInfo.userUniqueToken
+									}
+								})
+							.then(res => {
+								if (res.data.status == 200) {
+									var addressList = res.data.data;
+									console.log(addressList);
+									this.addressList = addressList;
+
+								} else if (res.data.status == 500) {
+									alert(res.data.msg);
+									console.log(res.data.msg);
+								} else {
+									alert(res.data.msg);
+									console.log(res.data.msg);
+								}
+							});
+					},
+					// 通过cookie判断用户是否登录
+					judgeUserLoginStatus() {
+						var userCookie = app.getCookie("user");
+						if (
+							userCookie != null &&
+							userCookie != undefined &&
+							userCookie != ""
+						) {
+							var userInfoStr = decodeURIComponent(userCookie);
+							// console.log(userInfoStr);
+							if (
+								userInfoStr != null &&
+								userInfoStr != undefined &&
+								userInfoStr != ""
+							) {
+								var userInfo = JSON.parse(userInfoStr);
+								// 判断是否是一个对象
+								if ( typeof(userInfo)  == "object" ) {
+									this.userIsLogin = true;
+									// console.log(userInfo);
+									this.userInfo = userInfo;
+								} else {
+									this.userIsLogin = false;
+									this.userInfo = {};
+								}
+							}
+						} else {
+							this.userIsLogin = false;
+							this.userInfo = {};
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lamb.key.mapper.CategoryMapperCustom">
+    <resultMap id="myCategoryVO" type="lamb.key.pojo.vo.CategoryCustomVO">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="type" property="type"></result>
+        <result column="fatherId" property="fatherId"></result>
+        <collection property="subCategoryVOList" ofType="lamb.key.pojo.vo.SubCategoryVO">
+            <id column="subId" property="subId"></id>
+            <result column="subName" property="subName"></result>
+            <result column="subType" property="subType"></result>
+            <result column="subFatherId" property="subFatherId"></result>
+        </collection>
+    </resultMap>
+    
+    
+    <select id="queryFatherAndKidCategory" parameterType="java.lang.Integer" resultMap="myCategoryVO">
+        SELECT
+            f.id as id,
+            f.name as name,
+            f.type as type,
+            f.father_id as fatherId,
+            c.id as subId,
+            c.name as subName,
+            c.type as subType,
+            c.father_id as subFatherId
+        FROM
+            category f
+        LEFT JOIN
+            category c
+        ON
+            f.id = c.father_id
+        WHERE
+            f.father_id = #{rootId}
+    </select>
+    
+    
+    <resultMap id="myNewsItemVO" type="lamb.key.pojo.vo.NewsItemVO">
+        <id column="rootCatId" property="rootCatId"></id>
+        <result column="rootCatName" property="rootCatName"></result>
+        <result column="slogan" property="slogan"></result>
+        <result column="catImage" property="catImage"></result>
+        <result column="bgColor" property="bgColor"></result>
+        <collection property="simpleItemList" ofType="lamb.key.pojo.vo.SixNewsItemVO">
+            <id column="itemId" property="itemId"></id>
+            <result column="itemName" property="itemName"></result>
+            <result column="itemUrl" property="itemUrl"></result>
+            <result column="createdTime" property="createdTime"></result>
+        </collection>
+
+    </resultMap>
+    <select id="queryNewsItemCommodityOfRootCategory" parameterType="java.lang.Integer" resultMap="myNewsItemVO">
+        select
+            f.id as rootCatId,
+            f.`name` as rootCatName,
+            f.slogan as slogan,
+            f.cat_image as catImage,
+            f.bg_color as bgColor,
+            i.id as itemId,
+            i.item_name as itemName,
+            ii.url as itemUrl,
+            i.created_time as createdTime
+        FROM category f LEFT JOIN items i ON f.id = i.root_cat_id
+                        LEFT JOIN items_img ii ON i.id = ii.item_id
+
+        WHERE f.type = 1
+        AND   i.root_cat_id=#{rootId}
+        AND   ii.is_main=1
+        ORDER BY i.created_time DESC
+        LIMIT 0,6
+    </select>
+</mapper>

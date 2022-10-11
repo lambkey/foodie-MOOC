@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "cos.tencent",
+      "type": "lamb.key.config.COSPropertiesConfig",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "cos.tencent.accesskey",
+      "type": "java.lang.String",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    },
+    {
+      "name": "cos.tencent.bucket",
+      "type": "java.lang.String",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    },
+    {
+      "name": "cos.tencent.bucket-name",
+      "type": "java.lang.String",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    },
+    {
+      "name": "cos.tencent.path",
+      "type": "java.lang.String",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    },
+    {
+      "name": "cos.tencent.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "lamb.key.config.COSPropertiesConfig"
+    }
+  ],
+  "hints": []
+}

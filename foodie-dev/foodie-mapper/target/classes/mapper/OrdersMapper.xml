@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lamb.key.mapper.OrdersMapper">
+
+    <resultMap id="myOrderManagerVO" type="lamb.key.pojo.center.vo.OrderManagerVO">
+        <id property="orderId" column="orderId"></id>
+        <result property="createdTime" column="createdTime" ></result>
+        <result property="payMethod" column="payMethod" ></result>
+        <result property="realPayAmount" column="realPayAmount" ></result>
+        <result property="postAmount" column="postAmount" ></result>
+        <result property="orderStatus" column="orderStatus"></result>
+        <result property="isComment" column="isComment"></result>
+        <collection property="subOrderItemList" ofType="lamb.key.pojo.center.vo.SubOrderManagerVO">
+            <id property="itemId" column="itemId"></id>
+            <result property="itemImg" column="itemImg"></result>
+            <result property="itemName" column="itemName"></result>
+            <result property="itemSpecId" column="itemSpecId"></result>
+            <result property="itemSpecName" column="itemSpecName"></result>
+            <result property="price" column="price"></result>
+            <result property="buyCounts" column="buyCounts"></result>
+        </collection>
+    </resultMap>
+
+    <select id="queryOrderStatusForUser" parameterType="Map" resultMap="myOrderManagerVO">
+        select
+            od.id as orderId,
+            od.created_time as createdTime,
+            od.pay_method as payMethod,
+            od.real_pay_amount as realPayAmount,
+            od.post_amount as postAmount,
+            od.is_comment as isComment,
+            os.order_status as orderStatus,
+            oi.item_id as itemId,
+            oi.item_img as itemImg,
+            oi.item_name as itemName,
+            oi.item_spec_id as itemSpecId,
+            oi.item_spec_name as itemSpecName,
+            oi.price as price,
+            oi.buy_counts as buyCounts
+        FROM
+            orders od
+                LEFT JOIN
+            order_status os
+            ON
+                od.id = os.order_id
+                LEFT JOIN
+            order_items oi
+            ON
+                od.id = oi.order_id
+        WHERE
+            od.user_id=#{paramsMap.userId}
+          AND
+            od.is_delete =0
+            <if test="paramsMap.orderStatus != null">
+                and os.order_status = #{paramsMap.orderStatus}
+            </if>
+        ORDER BY od.updated_time ASC
+    </select>
+
+    <update id="updateOrdersIsDelete" parameterType="Map" >
+        update
+        orders
+        set is_delete=1
+        where
+        id=#{paramMap.orderId}
+        and
+        user_id=#{paramMap.userId}
+    </update>
+
+    <update id="updateIsCommented" parameterType="Map">
+        update orders
+        set is_comment=#{paramsMap.isComment},updated_time=#{paramsMap.updateTime}
+        where
+        id =#{paramsMap.orderId}
+
+    </update>
+
+
+</mapper>

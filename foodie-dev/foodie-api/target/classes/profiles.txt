@@ -1,0 +1,24 @@
+profiles 多环境配置梳理
+1.数据源配置
+    1.1 url 根据自身情况去修改为 localhost 或者 内网IP(集群或者分布式系统,一定要使用内网IP)
+    1.2 密码 root 改为自己的密码
+
+2.mybatis 日志打印
+    dev 可以打印
+    test 可以打印
+    prod 无需打印
+
+3.cos腾讯镜像存储服务
+    图片保存
+    图片请求
+    cos等一些必要配置
+
+4.从支付中回调天天吃货的回调地址
+    public final String payReturnUrl="http://localhost:8088/orders/notifyMerchantOrderPaid";
+
+5.打包方式:
+1.jar
+    服务化的概念，后续结束springcloud,所有的服务打包都是以jar的形式存在的
+2.war
+    应用程序的概念，也可以向外提供服务和接口
+

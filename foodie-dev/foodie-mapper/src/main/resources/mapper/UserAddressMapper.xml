@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lamb.key.mapper.UserAddressMapper">
+    <select id="queryAddressByUserId" parameterType="java.lang.String" resultType="lamb.key.pojo.vo.AddressVO">
+        SELECT
+            user_address.id as id,
+            user_address.receiver as receiver,
+            user_address.mobile as mobile,
+            user_address.province as province,
+            user_address.city as city,
+            user_address.district as district,
+            user_address.detail as detail,
+            user_address.is_default as isDefault
+        FROM
+            user_address
+        WHERE
+            user_address.user_id=#{userId}
+    </select>
+    <update id="updateDefault" parameterType="java.lang.String">
+        UPDATE
+            user_address
+        SET
+            user_address.is_default=0
+        WHERE
+            user_address.user_id=#{userId}
+    </update>
+    <update id="updateDefaultToSelect" parameterType="java.lang.String">
+        UPDATE
+            user_address
+        SET
+            user_address.is_default=1
+        WHERE
+            user_address.user_id=#{userId}
+          and
+            user_address.id=#{addressId}
+    </update>
+
+
+</mapper>
