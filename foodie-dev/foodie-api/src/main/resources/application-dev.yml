@@ -12,8 +12,8 @@ mybatis-plus:
 
 cos:
   tencent:
-    accesskey: AKIDJRJwLWS9cqoX0DBtLYVCeqnUw84lCPN5
-    secretKey: UjiRv97sNddNs76pJXVFkzzkFUTDhvtb
+    accesskey: AKIDJRJwLWS9cqoX0DBtLYVCeqnUw84lCP
+    secretKey: UjiRv97sNddNs76pJXVFkzzkFUTDhv
     bucket: ap-guangzhou
     bucketName: lambkey-1309051782
     path: https://lambkey-1309051782.cos.ap-guangzhou.myqcloud.com
